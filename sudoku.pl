@@ -1,5 +1,24 @@
 ?- use_module(library(clpfd)).
 
+problem([[_,_,_,_,_,_,_,_,_],
+         [_,_,_,_,_,3,_,8,5],
+         [_,_,1,_,2,_,_,_,_],
+         [_,_,_,5,_,7,_,_,_],
+         [_,_,4,_,_,_,1,_,_],
+         [_,9,_,_,_,_,_,_,_],
+         [5,_,_,_,_,_,_,7,3],
+         [_,_,2,_,1,_,_,_,_],
+         [_,_,_,_,4,_,_,_,9]]).
+
+main :-
+        solve_problems.
+
+solve_problems :-
+        problem(Rows),
+    	sudoku(Rows),
+    	maplist(label, Rows),
+        maplist(portray_clause, Rows).
+
 sudoku(Rows) :-
         /* list of lenght nine*/
         length(Rows, 9),
@@ -16,21 +35,3 @@ sudoku(Rows) :-
         /*transpoe a matriz e faz a mesma verificacao (agora ve se todas as colunas sao distintas)*/
         transpose(Rows, Columns),
         maplist(all_distinct, Columns).
-
-problem([[_,_,_,_,_,_,_,_,_],
-         [_,_,_,_,_,3,_,8,5],
-         [_,_,1,_,2,_,_,_,_],
-         [_,_,_,5,_,7,_,_,_],
-         [_,_,4,_,_,_,1,_,_],
-         [_,9,_,_,_,_,_,_,_],
-         [5,_,_,_,_,_,_,7,3],
-         [_,_,2,_,1,_,_,_,_],
-         [_,_,_,_,4,_,_,_,9]]).
-
-solve_problems :-
-        problem(Rows),
-    	sudoku(Rows),
-    	maplist(label, Rows),
-        maplist(portray_clause, Rows).
-main :-
-        solve_problems.
