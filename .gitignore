@@ -1,0 +1,8 @@
+*.swp
+*.swo
+*.o
+*.hi
+*.workspace
+
+.DS_Store
+dis
