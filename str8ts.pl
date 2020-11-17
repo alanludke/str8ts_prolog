@@ -17,10 +17,10 @@ solve_problems :-
         maplist(portray_clause, Rows).
 
 str8ts(Rows) :-
-        /* list of lenght nine*/
+        /* list of lenght six*/
         length(Rows, 6),
         /* map each of the rows to have the same lenght as the list Rows*/
-        maplist(same_length(Rows), Rows), 
+        /* maplist(same_length(Rows), Rows),*/
         /* concatena todos os elementos */
         append(Rows, Vs),
          /* delimita o escopo dos numeros*/
