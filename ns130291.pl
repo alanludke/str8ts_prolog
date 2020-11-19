@@ -4,7 +4,7 @@ str8ts(Puzzle):-
 				maplist(magic, Puzzle),         
 				transpose(Puzzle, PuzzleT),     
 				maplist(magic, PuzzleT),        
-				printstr8ts(Puzzle).            
+				print_matrix(Puzzle).            
 
 compartment([]).                               
 compartment(Compartment) :-
@@ -58,6 +58,10 @@ findbnumbers([X|Tail], [S|Bs]):-
                 number(S),
                 findbnumbers(Tail, Bs), !.
 findbnumbers([_|Tail], Bs):-  findbnumbers(Tail, Bs).
+
+print_matrix([]).
+print_matrix([H|T]) :- write(H), nl, print_matrix(T).
+
 
 printstr8ts(Puzzle):-                          
 				maplist(printrow, Puzzle).
