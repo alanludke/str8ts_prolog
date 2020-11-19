@@ -50,20 +50,16 @@ magic(Row):-
                 
                 split_s(Row,ListC),
                 writeln('ListC = '+ListC),
-                /*
                 findbnumbers(Row, ListB),
-                
                 writeln('ListB = '+ListB),
-                */
+                
                 append(ListC, ListCmerged),
                 ListCmerged ins 1..5,
                 writeln('ListCmerged = '+ListCmerged),
-                /*
+                
                 append(ListB, ListCmerged, List),
-                */
-
-                /* mudar ListC para List*/
-                all_different(ListCmerged),
+                
+                all_different(List),
                 writeln('opa'),
                 maplist(compartment, ListC).
 
@@ -71,39 +67,6 @@ findcompartment([],[]).
 findcompartment(Row, [Comp|ListC]):-
                 split(Row, Comp, Rest),
                 findcompartment(Rest, ListC), !.
-
-split(L,P,R):-split(L,P,[],R).
-split([],_,[],[]).
-split([],_,S,[S]) :-
-                writeln('q'),
-                writeln(S),
-                writeln('xxxxxx'),
-                S \= [].
-split([P|T],P,[],R) :-
-                writeln('w'),
-                writeln([P|T]),
-                writeln(R),
-                writeln('xxxxxx'),
-                split(T,P,[],R).
-split([P|T],P,L,[L|R]) :-
-                writeln('e'),
-                writeln([P|T]),
-                writeln(P),
-                writeln(L),
-                writeln([L|R]),
-                L \= [],
-                writeln('xxxxxx'),
-                split(T,P,[],R).
-split([H|T],P,S,R) :-
-                writeln('r'),
-                writeln([H|T]),
-                writeln(P),
-                writeln(S),
-                writeln(R),
-                writeln('xxxxxx'),
-                H \= P,
-                append(S, [H], S2), 
-                split(T,P,S2,R).
 
 split_s([],[[]]).
 split_s([H|T],[[H|XH]|XR]) :- var(H),!,split_s(T,[XH|XR]).
@@ -113,22 +76,23 @@ split_s([H|T],[[H|XH]|XR]) :- split_s(T,[XH|XR]).
 
 findbnumbers([],[]).                           
 findbnumbers([X|Tail], [S|Bs]):-
-                %writeln('X = '+X),
+                writeln('X = '+X),
+                nonvar(X),
                 /*
                 is_list(X),
                 */
                 string_codes(X,N),
-                %writeln('N = '+N),
+                writeln('N = '+N),
                 length(N,2),
                 N = [A|B],
-                %writeln('A = '+A),
-                %writeln('B = '+B),
+                writeln('A = '+A),
+                writeln('B = '+B),
                 A == 98,
                 number_codes(S, B),
                 number(S),
-                %writeln('S = '+S),
-                %writeln('tail = '+Tail),
-                %writeln('Bs = '+Bs),
+                writeln('S = '+S),
+                writeln('tail = '+Tail),
+                writeln('Bs = '+Bs),
                 findbnumbers(Tail, Bs), !.
 findbnumbers([_|Tail], Bs):-  findbnumbers(Tail, Bs).
 
