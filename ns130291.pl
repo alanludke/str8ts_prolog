@@ -1,15 +1,4 @@
 /*
-
-Puzzle = [[1,2,3,4,5,6,7,_,_],
-          [2,3,4,5,_,7,8,9,_],
-          [3,_,_,6,7,_,_,_,_],
-          [_,5,6,7,8,_,1,_,_],
-          [5,6,7,8,9,1,2,3,4],
-          [_,7,8,_,_,2,_,4,5],
-          [7,_,_,1,2,_,4,_,_],
-          [_,9,_,"b2",3,4,_,6,7],
-          [_,1,_,3,4,_,6,_,8]], str8ts(Puzzle).
-
 Puzzle = [[1,2,3,4,5,6],
           [2,_,4,5,_,1],
           [3,_,_,6,1,_],
@@ -23,11 +12,11 @@ Puzzle = [[_,5,"b",2,1],
         ["b1",_,2,_,5],
         ["b","b",3,_,4]], str8ts(Puzzle).
 
-Puzzle = [[_,5,_,2,1],
-        [5,_,_,_,2],
-        [3,_,_,1,_],
-        [_,_,2,_,5],
-        [_,_,3,_,4]], str8ts(Puzzle).
+Puzzle = [[1,2,3,_,5],
+          [2,3,_,5,1],
+          [3,_,5,_,_],
+          [4,5,"b",_,3],
+          [_,_,2,3,_]], str8ts(Puzzle).
 */
 :- use_module(library(clpfd)).
 
@@ -41,8 +30,12 @@ compartment([]).
 compartment(Compartment) :-
 				length(Compartment,Laenge),
 				minimum(Compartment,Min),
+                writeln('Laenge = '+Laenge),
+                writeln('Compartment = '+Compartment),
+                writeln('Min = '+Min),
 				maximum(Compartment,Max),
-				Laenge-1 #= Max-Min.      
+                writeln('Max = '+Max),
+				Laenge-1 #= Max-Min.
 
 minimum([Min],Min).                            
 minimum([X,Y|Tail],Min) :- X #=< Y, minimum([X|Tail],Min).
@@ -52,91 +45,90 @@ maximum([Max],Max).
 maximum([X,Y|Tail],Max) :- X #>= Y, maximum([X|Tail],Max).
 maximum([X,Y|Tail],Max) :- X #< Y, maximum([Y|Tail],Max).
 
-
-magic([]).                                     
-magic(Row):-
-                split(Row,"b",ListC),
-
-                writeln('ListC = '+ListC),
-				findbnumbers(Row, ListB),
-                writeln('ListB = '+ListB),
-				append(ListC, ListCmerged),
-				ListCmerged ins 1..5,
-                writeln('ListCmerged = '+ListCmerged),
-				append(ListB, ListCmerged, List),
-				all_different(List),
-				maplist(compartment, ListC).
-
-/*
-
-magic([]).                                    
+magic([]).
 magic(Row):-
                 
-				findcompartment(Row, ListC),
-                
-                split(Row,"b",ListC),
+                split_s(Row,ListC),
                 writeln('ListC = '+ListC),
-				findbnumbers(Row, ListB),
+                /*
+                findbnumbers(Row, ListB),
                 
                 writeln('ListB = '+ListB),
-				append(ListC, ListCmerged),
-				ListCmerged ins 1..5,
+                */
+                append(ListC, ListCmerged),
+                ListCmerged ins 1..5,
                 writeln('ListCmerged = '+ListCmerged),
+                /*
+                append(ListB, ListCmerged, List),
+                */
 
-				append(ListB, ListCmerged, List),
-                writeln('List = '+List),
-				all_different(List),
-                writeln(all_different(List)),
-				maplist(compartment, ListC).
-*/
+                /* mudar ListC para List*/
+                all_different(ListCmerged),
+                writeln('opa'),
+                maplist(compartment, ListC).
+
 findcompartment([],[]).                        
 findcompartment(Row, [Comp|ListC]):-
                 split(Row, Comp, Rest),
                 findcompartment(Rest, ListC), !.
-/*
-split([],[],[]).                               
-split([X|Tail], [], Rest):-
-                is_list(X),
-                X = [A|_],
-                [A] == "b",
-                Rest = Tail, !.
-split([X|Tail], [X|Start], Rest):-
-                split(Tail, Start, Rest).
 
-*/
 split(L,P,R):-split(L,P,[],R).
 split([],_,[],[]).
 split([],_,S,[S]) :-
+                writeln('q'),
+                writeln(S),
+                writeln('xxxxxx'),
                 S \= [].
 split([P|T],P,[],R) :-
+                writeln('w'),
+                writeln([P|T]),
+                writeln(R),
+                writeln('xxxxxx'),
                 split(T,P,[],R).
 split([P|T],P,L,[L|R]) :-
+                writeln('e'),
+                writeln([P|T]),
+                writeln(P),
+                writeln(L),
+                writeln([L|R]),
                 L \= [],
+                writeln('xxxxxx'),
                 split(T,P,[],R).
 split([H|T],P,S,R) :-
+                writeln('r'),
+                writeln([H|T]),
+                writeln(P),
+                writeln(S),
+                writeln(R),
+                writeln('xxxxxx'),
                 H \= P,
                 append(S, [H], S2), 
                 split(T,P,S2,R).
 
+split_s([],[[]]).
+split_s([H|T],[[H|XH]|XR]) :- var(H),!,split_s(T,[XH|XR]).
+split_s(["b"|T],[[]|X]) :- !,split_s(T,X).
+split_s([H|T],[[H|XH]|XR]) :- split_s(T,[XH|XR]).
+
 
 findbnumbers([],[]).                           
 findbnumbers([X|Tail], [S|Bs]):-
-                writeln('X = '+X),
+                %writeln('X = '+X),
                 /*
                 is_list(X),
                 */
                 string_codes(X,N),
-                writeln('N = '+N),
+                %writeln('N = '+N),
                 length(N,2),
                 N = [A|B],
-                writeln('A = '+A),
-                writeln('B = '+B),
+                %writeln('A = '+A),
+                %writeln('B = '+B),
                 A == 98,
                 number_codes(S, B),
                 number(S),
-                writeln('S = '+S),
-                writeln('tail = '+Tail),
-                writeln('Bs = '+Bs),
+                %writeln('S = '+S),
+                %writeln('tail = '+Tail),
+                %writeln('Bs = '+Bs),
                 findbnumbers(Tail, Bs), !.
 findbnumbers([_|Tail], Bs):-  findbnumbers(Tail, Bs).
 
