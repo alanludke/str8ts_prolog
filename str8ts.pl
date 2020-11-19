@@ -1,34 +1,88 @@
-?- use_module(library(clpfd)).
+:- use_module(library(clpfd)).
 
-problem([[_,_,_,_,_,4],
-         [_,_,_,_,_,1],
-         [_,_,3,_,_,_],
-         [5,_,_,_,_,_],
-         [6,_,4,_,_,_],
-         [_,1,_,_,_,_]]).
+str8ts(Puzzle):-
+				maplist(magic, Puzzle),         
+				transpose(Puzzle, PuzzleT),     
+				maplist(magic, PuzzleT),        
+				printstr8ts(Puzzle).            
 
-main :-
-        solve_problems.
+compartment([]).                               
+compartment(Compartment) :-
+				length(Compartment,Laenge),
+				minimum(Compartment,Min),
+				maximum(Compartment,Max),
+				Laenge-1 #= Max-Min.
 
-solve_problems :-
-        problem(Rows),
-    	str8ts(Rows),
-    	maplist(label, Rows),
-        maplist(portray_clause, Rows).
+minimum([Min],Min).                            
+minimum([X,Y|Tail],Min) :- X #=< Y, minimum([X|Tail],Min).
+minimum([X,Y|Tail],Min) :- X #> Y, minimum([Y|Tail],Min).
 
-str8ts(Rows) :-
-        /* list of lenght six*/
-        length(Rows, 6),
-        /* map each of the rows to have the same lenght as the list Rows*/
-        /* maplist(same_length(Rows), Rows),*/
-        /* concatena todos os elementos */
-        append(Rows, Vs),
-         /* delimita o escopo dos numeros*/
-        Vs ins 1..6,
-        /* declaração basica do jogo acaba aqui*/
+maximum([Max],Max).                            
+maximum([X,Y|Tail],Max) :- X #>= Y, maximum([X|Tail],Max).
+maximum([X,Y|Tail],Max) :- X #< Y, maximum([Y|Tail],Max).
 
-        /*mapeia todas as rows para serem distintas*/
-        maplist(all_distinct, Rows),
-        /*transpoe a matriz e faz a mesma verificacao (agora ve se todas as colunas sao distintas)*/
-        transpose(Rows, Columns),
-        maplist(all_distinct, Columns).
+magic([]).
+magic(Row):-
+                split_s(Row, ListC),
+                findbnumbers(Row, ListB),
+                append(ListC, ListCmerged),
+                ListCmerged ins 1..9,
+                append(ListB, ListCmerged, List),
+                all_different(List),
+                maplist(compartment, ListC).
+
+findcompartment([],[]).                        
+findcompartment(Row, [Comp|ListC]):-
+                split(Row, Comp, Rest),
+                findcompartment(Rest, ListC), !.
+
+split_s([],[[]]).
+split_s([H|T],[[H|XH]|XR]) :- var(H),!,split_s(T,[XH|XR]).
+split_s(A,[[]|X]) :-
+                A = [H|T],
+                string_codes(H,N),
+                N = [K|_],
+                K == 98,
+                !,split_s(T,X).
+split_s([H|T],[[H|XH]|XR]) :- split_s(T,[XH|XR]).
+
+
+findbnumbers([],[]).                           
+findbnumbers([X|Tail], [S|Bs]):-
+                nonvar(X),
+                string_codes(X,N),
+                length(N,2),
+                N = [A|B],
+                A == 98,
+                number_codes(S, B),
+                number(S),
+                findbnumbers(Tail, Bs), !.
+findbnumbers([_|Tail], Bs):-  findbnumbers(Tail, Bs).
+
+printstr8ts(Puzzle):-                          
+				maplist(printrow, Puzzle).
+
+printrow(Row):-
+                printzeichen(Row),
+                writeln('').
+
+printzeichen([]).
+printzeichen([X|Tail]):-
+                is_list(X),
+                length(X,2),
+                writef("%s", [X]),
+                write(' '),
+                printzeichen(Tail), !.
+
+printzeichen([X|Tail]):-
+                is_list(X),
+                length(X,1),
+                writef(" %s", [X]),
+                write(' '),
+                printzeichen(Tail), !.
+
+printzeichen([X|Tail]):-
+                write(' '),
+                write(X),
+                write(' '),
+                printzeichen(Tail).
