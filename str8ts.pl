@@ -1,23 +1,23 @@
 :- use_module(library(clpfd)).
 
 str8ts(Puzzle):-
-				maplist(magic, Puzzle),         
-				transpose(Puzzle, PuzzleT),     
-				maplist(magic, PuzzleT),        
-				print_matrix(Puzzle).            
+                maplist(magic, Puzzle),
+                transpose(Puzzle, PuzzleT),
+                maplist(magic, PuzzleT),
+                print_matrix(Puzzle).
 
-compartment([]).                               
+compartment([]).
 compartment(Compartment) :-
-				length(Compartment,Laenge),
-				minimum(Compartment,Min),
-				maximum(Compartment,Max),
-				Laenge-1 #= Max-Min.
+                length(Compartment,Laenge),
+                minimum(Compartment,Min),
+                maximum(Compartment,Max),
+                Laenge-1 #= Max-Min.
 
-minimum([Min],Min).                            
+minimum([Min],Min).
 minimum([X,Y|Tail],Min) :- X #=< Y, minimum([X|Tail],Min).
 minimum([X,Y|Tail],Min) :- X #> Y, minimum([Y|Tail],Min).
 
-maximum([Max],Max).                            
+maximum([Max],Max).
 maximum([X,Y|Tail],Max) :- X #>= Y, maximum([X|Tail],Max).
 maximum([X,Y|Tail],Max) :- X #< Y, maximum([Y|Tail],Max).
 
@@ -31,7 +31,7 @@ magic(Row):-
                 all_different(List),
                 maplist(compartment, ListC).
 
-findcompartment([],[]).                        
+findcompartment([],[]).
 findcompartment(Row, [Comp|ListC]):-
                 split(Row, Comp, Rest),
                 findcompartment(Rest, ListC), !.
@@ -46,8 +46,7 @@ split_s(A,[[]|X]) :-
                 !,split_s(T,X).
 split_s([H|T],[[H|XH]|XR]) :- split_s(T,[XH|XR]).
 
-
-findbnumbers([],[]).                           
+findbnumbers([],[]).
 findbnumbers([X|Tail], [S|Bs]):-
                 nonvar(X),
                 string_codes(X,N),
