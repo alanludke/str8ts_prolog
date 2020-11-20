@@ -26,7 +26,10 @@ magic(Row):-
                 split_s(Row, ListC),
                 findbnumbers(Row, ListB),
                 append(ListC, ListCmerged),
-                ListCmerged ins 1..9,
+
+                length(Row,N),
+                ListCmerged ins 1..N,
+                
                 append(ListB, ListCmerged, List),
                 all_different(List),
                 maplist(compartment, ListC).
